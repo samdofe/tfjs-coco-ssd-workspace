@@ -30,3 +30,18 @@
   z-index: 1;
   position: absolute;
 }
+
+.logo {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  max-width: 300px;
+  margin-bottom: 3rem;
+}
+
+@media screen and (max-width: 650px) {
+  .logo {
+    flex-direction: column;
+    width: max-content;
+  }
+}
