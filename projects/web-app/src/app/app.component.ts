@@ -21,6 +21,7 @@ import {IStyles} from "./app.models";
 export class AppComponent {
   private model!: cocoSsd.ObjectDetection;
   @ViewChild('webcam') webcamElementRef!: ElementRef;
+  predictionScore = 0.66;
   title = 'web-app';
   hideButton= false;
   hideDemos = true;
@@ -66,7 +67,7 @@ export class AppComponent {
         // they have a high confidence score.
         predictions.forEach((prediction: cocoSsd.DetectedObject) => {
           // If we are over 66% sure we are sure we classified it right, draw it!
-          if(prediction.score > 0.66){
+          if(prediction.score > this.predictionScore){
             this.predictionsLabel = `${prediction.class} - with ${Math.round(parseFloat(prediction.score.toString()) * 100)} % confidence.`;
             const { bbox } = prediction;
             const labelStyles = {
