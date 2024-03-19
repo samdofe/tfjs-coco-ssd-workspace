@@ -25,6 +25,9 @@
             ],
             "tsConfig": "projects/web-app/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
+            "allowedCommonJsDependencies": [
+              "@tensorflow-models/coco-ssd"
+            ],
             "assets": [
               "projects/web-app/src/favicon.ico",
               "projects/web-app/src/assets"
@@ -42,7 +45,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumError": "3mb"
                 },
                 {
                   "type": "anyComponentStyle",
