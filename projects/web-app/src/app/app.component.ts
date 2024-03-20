@@ -3,29 +3,30 @@
  * **/
 import {Component, effect, ElementRef, ViewChild} from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import {CommonModule} from "@angular/common";
+import {NgClass, NgFor, NgStyle} from "@angular/common";
 
 /**
  * TensorFlow imports
  * **/
 import * as cocoSsd from '@tensorflow-models/coco-ssd';
-import {IStyles} from "./app.models";
+import {IPrediction, IStyles} from "./app.models";
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule],
+  imports: [RouterOutlet, NgStyle, NgFor, NgClass],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
   private model!: cocoSsd.ObjectDetection;
   @ViewChild('webcam') webcamElementRef!: ElementRef;
+  predictions: IPrediction[] = [];
   predictionScore = 0.66;
   title = 'web-app';
   hideButton= false;
   hideDemos = true;
-  predictionsLabel = '';
+  predictionLabel = '';
   predictionsLabelStyles: IStyles = { 'display' : 'none'};
   highlighterStyles: IStyles= {};
 
@@ -62,15 +63,16 @@ export class AppComponent {
   predictWebcam(){
     // Now let's start classifying a frame in the stream.
     this.model.detect(this.webcamElementRef.nativeElement)
-      .then( (predictions:cocoSsd.DetectedObject[])=> {
+      .then( (predictionsResponse:cocoSsd.DetectedObject[])=> {
         // Now lets loop through predictions and draw them to the live view if
         // they have a high confidence score.
-        predictions.forEach((prediction: cocoSsd.DetectedObject) => {
+        this.predictions = predictionsResponse.reduce((predictionsAcc: IPrediction[], pred: cocoSsd.DetectedObject) => {
+          let prediction = {...pred} as IPrediction;
+          const { class : predClass, bbox, score } = prediction;
           // If we are over 66% sure we are sure we classified it right, draw it!
-          if(prediction.score > this.predictionScore){
-            this.predictionsLabel = `${prediction.class} - with ${Math.round(parseFloat(prediction.score.toString()) * 100)} % confidence.`;
-            const { bbox } = prediction;
-            const labelStyles = {
+          if(score > this.predictionScore){
+            prediction.label = `${predClass} - with ${Math.round(parseFloat(score.toString()) * 100)} % confidence.`;
+            prediction.labelStyles = {
               'margin-left': `${bbox[0]}px`,
               'margin-top': `${bbox[1] - 10}px`,
               'width': `${bbox[2] - 10}px`,
@@ -78,19 +80,32 @@ export class AppComponent {
               'left': '0px'
             };
 
-            this.predictionsLabelStyles = {...labelStyles};
-
-            const highlighterStyles = {
+            prediction.highlighterStyles = {
               'left': `${bbox[0]}px`,
               'top': `${bbox[1]}px`,
               'width': `${bbox[2]}px`,
               'height': `${bbox[3]}px`
             };
 
-            this.highlighterStyles = {...highlighterStyles};
+            predictionsAcc = [...predictionsAcc, prediction];
+
+            /**
+             * Uncomment to watch dev tools console bbox coordinates
+             * **/
+/*            console.log(`
+            ******************************************
+                Class prediction : ${prediction.class}
+                Bounding Box coordinates :
+                      x : ${bbox[0]}
+                      y : ${bbox[1]}
+            ******************************************
+            `)*/
 
           }
-        })
+
+          return predictionsAcc;
+
+        }, []);
 
         // Call this function again to keep predicting when the browser is ready.
         window.requestAnimationFrame(() => this.predictWebcam());

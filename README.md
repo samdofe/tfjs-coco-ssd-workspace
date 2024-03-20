@@ -17,10 +17,15 @@ Run `ng generate component component-name` to generate a new component. You can 
 Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
 
 ## Working App
-
-###
+### Coco SSD angular app
+![CocoSsd Angular App](projects/web-app/src/assets/images/tfjs-coco-ssd-app.gif)
+### cocoSsd module loaded
 ![When cocoSsd loaded](projects/web-app/src/assets/images/tfjs-angular-app.png)
-###
+### Bottle identification
 ![Bottle identify](projects/web-app/src/assets/images/tfjs-angular-app-2.png)
+### Multiple Objects identification
+![Bottle identify](projects/web-app/src/assets/images/tfjs-angular-app-3.png)
+### Dev tools console bbox coordinates
+![Bottle identify](projects/web-app/src/assets/images/tfjs-angular-app-4.png)
 
 

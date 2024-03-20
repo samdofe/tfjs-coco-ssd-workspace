@@ -54,8 +54,10 @@
     (check the top left of your window)
   </p>
   <div class="camView">
-    <p [ngStyle]="predictionsLabelStyles">{{ predictionsLabel }}</p>
-    <div [ngStyle]="highlighterStyles" class="highlighter"></div>
+    <div *ngFor="let prediction of predictions">
+      <p [ngStyle]="prediction.labelStyles">{{ prediction.label }}</p>
+      <div [ngStyle]="prediction.highlighterStyles" class="highlighter"></div>
+    </div>
     <button [ngClass]="{'removed': hideButton}" (click)="enableCam()">Enable Webcam</button>
     <video #webcam autoplay muted width="640" height="480" (loadeddata)="predictWebcam()"></video>
   </div>
